@@ -107,6 +107,22 @@ class Text(object):
         """
         return " ".join(words)
 
+    def test_sentence_input(self, sentence):
+            """
+            A basic sentence filter. The default rejects sentences that contain
+            the type of punctuation that would look strange on its own
+            in a randomly-generated sentence.
+            """
+            if len(sentence.strip()) == 0: return False
+            # Decode unicode, mainly to normalize fancy quotation marks
+            if sentence.__class__.__name__ == "str": # pragma: no cover
+                decoded = sentence
+            else: # pragma: no cover
+                decoded = unidecode(sentence)
+            # Sentence shouldn't contain problematic characters
+            if self.well_formed and self.reject_pat.search(decoded): return False
+            return True
+
     def test_sentence_output(self, words, max_overlap_ratio, max_overlap_total):
         max_overlap_allowed = 0.7 # don't match sentences more than 70% similar
         min_overlap_required = 0.5 # make sure 50% of words should be same
